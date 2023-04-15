@@ -1,0 +1,6 @@
+name: EnchantedGangs
+version: '${project.version}'
+main: tech.zmario.enchantedgangs.EnchantedGangs
+api-version: 1.13
+authors: [zMario]
+softdepend: [PlaceholderAPI, Vault, LunarClient-API, BadlionModAPI]

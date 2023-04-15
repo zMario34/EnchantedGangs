@@ -1,0 +1,139 @@
+# MySQL's connection details
+mysql:
+  enabled: false # Should the plugin use MySQL? If false, SQLite will be used
+  driver: 'com.mysql.cj.jdbc.Driver' # The driver to use for MySQL, default: 'com.mysql.cj.jdbc.Driver'
+  host: '127.0.0.1' # Hostname of the MySQL server, defaults to 'localhost'
+  port: 3306 # Database port, 3306 is the default
+  username: root # Username to connect to the MySQL server, defaults to 'root'
+  password: 'password' # Password to connect to the MySQL server, defaults to 'password'
+  database: gangs # Database to use, defaults to 'gangs'# Should the configuration be updated automatically?
+# The language to use, defaults to 'en' (Currently available: 'en', 'it')
+language: 'en'
+# Should the plugin check for configuration updates?
+configuration-updater: true
+# Should the friendly-fire be enabled?
+friendly-fire: false
+# The invite timeout in seconds (default: 60)
+invite-timeout: 60
+# Accept cooldown in seconds (default: 2). Use this if you don't have an antispam.
+# Set to 0 to disable. This is used to prevent a strange dupe glitch.
+accept-cooldown: 2
+# The max gang name length (default: 16, max: 48)
+max-name-length: 16
+# The maximum number of players that can be in a gang (default: 3)
+max-members-in-gang: 3
+# How many gangs should be visible in the gang list command? (default: 10)
+max-gangs-in-list: 10
+# Should we classify the gangs on the list as 'balance' or 'kills'? (default: balance)
+# Remember to change the /gang list command in the messages, so you can display the correct type
+list-ranking-type: balance
+# The minimum money to create a gang
+create-cost: 0
+# Ranks section
+ranks:
+  # The list of ranks, the first (must be 1) will be the gang owner and the last will be the lowest rank
+  list:
+    1: "Leader" # Leader rank must be number 1
+    2: "Co-Leader"
+    3: "Member"
+  permissions:
+    chat: 3 # The minimum rank to use the gang chat, with the default config member and superior can access the command
+    chest: 3
+    disband: 1
+    invite: 2
+    kick: 2
+    leave: 3
+    demote: 2
+    promote: 2
+# Features section, contains all features settings
+features:
+  chest:
+    # Should the gang chest command be enabled? (default: true)
+    enabled: true
+    # Size of the gang chest
+    size: 54
+  chat:
+    # Should the gang chat command be enabled? (default: true)
+    enabled: true
+  bank:
+    # Should the gang deposit and withdraw commands be enabled? (default: true)
+    enabled: true
+    # The minimum amount of money a player needs to deposit into the gang bank (default: 100)
+    deposit-minimum-amount: 100
+    # The minimum amount of money a player needs to withdraw from the gang bank (default: 100)
+    withdraw-minimum-amount: 100
+  kills:
+    # Should the gang kills feature be enabled? Kills can be viewed on the gang show and list (default: true)
+    enabled: true
+# Commands section
+commands:
+  gangs:
+    # The name of the command (default: 'enchantedgangs')
+    name: enchantedgangs
+    # The list of aliases for the main command
+    aliases:
+      - gangs
+      - gang
+      - g
+    # The permission required to use the command (default: 'enchantedgangs.command')
+    permission: 'enchantedgangs.command'
+  gang-admin:
+    name: gangsadmin
+    aliases:
+      - gangadmin
+      - gadmin
+      - ga
+    permission: 'enchantedgangs.admin'
+  admin:
+    reload:
+      name: reload
+      permission: 'enchantedgangs.admin'
+    statistic:
+      name: statistic
+      permission: 'enchantedgangs.admin'
+    disband:
+      name: disband
+      permission: 'enchantedgangs.admin'
+  create:
+    name: create
+    permission: 'enchantedgangs.command'
+  invite:
+    name: invite
+    permission: 'enchantedgangs.command'
+  kick:
+    name: kick
+    permission: 'enchantedgangs.command'
+  leave:
+    name: leave
+    permission: 'enchantedgangs.command'
+  disband:
+    name: disband
+    permission: 'enchantedgangs.command'
+  accept:
+    name: accept
+    permission: 'enchantedgangs.command'
+  promote:
+    name: promote
+    permission: 'enchantedgangs.command'
+  demote:
+    name: demote
+    permission: 'enchantedgangs.command'
+  show:
+    name: show
+    permission: 'enchantedgangs.command'
+  list:
+    name: list
+    permission: 'enchantedgangs.command'
+  chat:
+    name: chat
+    permission: 'enchantedgangs.command'
+  deposit:
+    name: deposit
+    permission: 'enchantedgangs.command'
+  withdraw:
+    name: withdraw
+    permission: 'enchantedgangs.command'
+  chest:
+    name: chest
+    permission: 'enchantedgangs.command'
+config-version: 1
