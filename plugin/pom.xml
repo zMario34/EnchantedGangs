@@ -110,7 +110,7 @@
         </dependency>
         <dependency>
             <groupId>tech.zmario</groupId>
-            <artifactId>api</artifactId>
+            <artifactId>enchantedgangs-api</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>

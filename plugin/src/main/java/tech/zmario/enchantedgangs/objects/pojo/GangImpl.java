@@ -10,7 +10,7 @@ import java.util.UUID;
 @Data
 public class GangImpl implements Gang {
 
-    private final String name;
+    private String name;
     private final Map<UUID, Integer> members;
 
     private UUID owner;
@@ -19,4 +19,8 @@ public class GangImpl implements Gang {
     private int kills = 0;
     private double balance;
 
+    public GangImpl(String name, Map<UUID, Integer> members) {
+        this.name = name;
+        this.members = members;
+    }
 }

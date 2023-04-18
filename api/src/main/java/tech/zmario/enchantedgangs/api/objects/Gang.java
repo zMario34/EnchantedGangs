@@ -7,24 +7,27 @@ import java.util.Map;
 import java.util.UUID;
 
 public interface Gang {
+
     String getName();
 
     @NotNull
     UUID getOwner();
 
-    void setOwner(UUID paramUUID);
+    void setOwner(UUID uuid);
 
     Map<UUID, Integer> getMembers();
 
     Inventory getChest();
 
-    void setChest(Inventory paramInventory);
+    void setName(String name);
+
+    void setChest(Inventory inventory);
 
     int getKills();
 
-    void setKills(int paramInt);
+    void setKills(int amount);
 
     double getBalance();
 
-    void setBalance(double paramDouble);
+    void setBalance(double amount);
 }

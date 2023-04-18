@@ -149,6 +149,12 @@ public enum MessagesConfiguration {
     CHEST_NOT_ENOUGH_PERMISSIONS("commands.chest.not-enough-permissions"),
     CHEST_OPENING("commands.chest.opening"),
 
+    RENAME_NOT_IN_GANG("commands.rename.not-in-gang"),
+    RENAME_NOT_ENOUGH_PERMISSIONS("commands.rename.not-enough-permissions"),
+    RENAME_NAME_ALREADY_EXISTS("commands.rename.name-already-exists"),
+    RENAME_NAME_TOO_LONG("commands.rename.name-too-long"),
+    RENAME_SUCCESS("commands.rename.success"),
+
     // Admin
     ADMIN_GANG_NOT_FOUND("commands.admin.gang-not-found"),
     ADMIN_SUCCESS("commands.admin.success"),
@@ -172,14 +178,19 @@ public enum MessagesConfiguration {
 
     public String getString(OfflinePlayer player) {
         String message = Utils.colorize(instance.getMessages().getString(path));
+
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI") && player != null) {
             return PlaceholderAPI.setPlaceholders(player, message);
         }
+
         return message;
     }
 
     public List<String> getStringList() {
-        return instance.getMessages().getStringList(path).stream().map(Utils::colorize).collect(Collectors.toList());
+        return instance.getMessages().getStringList(path)
+                .stream()
+                .map(Utils::colorize)
+                .collect(Collectors.toList());
     }
 
     public int getInt() {

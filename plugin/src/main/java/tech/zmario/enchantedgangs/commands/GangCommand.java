@@ -39,6 +39,7 @@ public class GangCommand implements CommandExecutor {
         addSubCommand(SettingsConfiguration.COMMAND_KICK_NAME.getString(), new KickCommand(plugin));
         addSubCommand(SettingsConfiguration.COMMAND_LEAVE_NAME.getString(), new LeaveCommand(plugin));
         addSubCommand(SettingsConfiguration.COMMAND_DISBAND_NAME.getString(), new DisbandCommand(plugin));
+        addSubCommand(SettingsConfiguration.COMMAND_RENAME_NAME.getString(), new RenameCommand(plugin));
         addSubCommand(SettingsConfiguration.COMMAND_ACCEPT_NAME.getString(), new AcceptCommand(plugin));
         addSubCommand(SettingsConfiguration.COMMAND_PROMOTE_NAME.getString(), new PromoteCommand(plugin));
         addSubCommand(SettingsConfiguration.COMMAND_DEMOTE_NAME.getString(), new DemoteCommand(plugin));

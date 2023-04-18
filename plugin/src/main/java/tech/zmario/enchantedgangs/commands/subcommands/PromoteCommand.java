@@ -63,15 +63,16 @@ public class PromoteCommand implements SubCommand {
                         .replace("%target%", args[1]));
                 return;
             }
+            int rank = gang.getMembers().get(target.getUniqueId());
 
-            if (target.getUniqueId().equals(gang.getOwner())) {
+            if (target.getUniqueId().equals(gang.getOwner()) || rank == 1) {
                 player.sendMessage(MessagesConfiguration.PROMOTE_TARGET_IS_OWNER.getString(player)
                         .replace("%target%", args[1]));
                 return;
             }
 
             String gangName = gang.getName();
-            int rank = gang.getMembers().get(target.getUniqueId());
+
             int newRank = rank - 1;
 
             if (!plugin.getStorage().rankExists(newRank)) {

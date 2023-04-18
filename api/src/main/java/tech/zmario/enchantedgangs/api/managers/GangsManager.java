@@ -15,51 +15,52 @@ import java.util.UUID;
 public interface GangsManager {
     Collection<Gang> getCachedGangs();
 
-    Collection<UUID> getGangMembers(@NotNull String paramString);
+    Collection<UUID> getGangMembers(@NotNull String gangName);
 
     @Nullable
-    Gang getGangUnsafe(@NotNull String paramString);
+    Gang getGangUnsafe(@NotNull String gangName);
 
-    Optional<Gang> getGangByName(@Nullable String paramString);
+    Optional<Gang> getGangByName(@Nullable String gangName);
 
-    Optional<Gang> getGangByMember(@NotNull UUID paramUUID);
+    Optional<Gang> getGangByMember(@NotNull UUID uuid);
 
-    Optional<Gang> getGangByPosition(RankingType paramRankingType, int paramInt);
+    Optional<Gang> getGangByPosition(RankingType type, int position);
 
     @Nullable
-    User getUserUnsafe(@NotNull UUID paramUUID);
+    User getUserUnsafe(@NotNull UUID uuid);
 
-    Optional<User> getUser(@NotNull UUID paramUUID);
+    Optional<User> getUser(@NotNull UUID uuid);
 
-    boolean gangExists(@NotNull String paramString);
+    boolean gangExists(@NotNull String name);
 
-    boolean isPlayerInGang(@NotNull UUID paramUUID);
+    boolean isPlayerInGang(@NotNull UUID uuid);
 
-    boolean isOwner(@NotNull UUID paramUUID);
+    boolean isOwner(@NotNull UUID uuid);
 
-    void addMember(@NotNull String paramString, @NotNull UUID paramUUID, int paramInt);
+    void addMember(@NotNull String gangName, @NotNull UUID uuid, int rank);
 
-    void removeMember(@NotNull UUID paramUUID);
+    void removeMember(@NotNull UUID uuid);
 
-    void updateRank(@NotNull UUID paramUUID, int paramInt);
+    void updateRank(@NotNull UUID uuid, int rank);
 
-    boolean hasChatActivated(UUID paramUUID);
+    boolean hasChatActivated(UUID uuid);
 
-    void setChatStatus(UUID paramUUID, boolean paramBoolean);
+    void setChatStatus(UUID uuid, boolean status);
 
-    void tryOpenChest(Player paramPlayer);
+    void tryOpenChest(Player player);
 
-    void setChest(Gang paramGang, Inventory paramInventory);
+    void setChest(Gang gang, Inventory inventory);
 
-    void setNewGang(UUID paramUUID, String paramString, int paramInt);
+    void setNewGang(UUID uuid, String name, int rank);
 
-    void removeGang(Player paramPlayer, String paramString);
+    void removeGang(Player player, String name);
 
-    void refreshTeammates(Gang paramGang);
+    void refreshTeammates(Gang gang);
 
-    void depositMoney(Player paramPlayer, Gang paramGang, int paramInt);
+    void depositMoney(Player player, Gang gang, int amount);
 
-    void withdrawMoney(Player paramPlayer, Gang paramGang, int paramInt);
+    void withdrawMoney(Player player, Gang gang, int amount);
 
-    void setKills(Gang paramGang, int paramInt);
+    void setKills(Gang gang, int amount);
+
 }

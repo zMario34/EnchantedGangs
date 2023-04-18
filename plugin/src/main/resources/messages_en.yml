@@ -90,6 +90,12 @@ commands:
     not-in-gang: "&8» &cYou are not in a gang."
     not-owner: "&8» &cYou are not the owner of your gang."
     success: "&8» &aThe gang %gang% was cancelled."
+  rename:
+    not-in-gang: "&8» &cYou are not in a gang."
+    not-enough-permissions: "&8» &cYou do not have enough permissions to rename the gang."
+    name-too-long: "&8» &cThe name must be less than 16 characters."
+    name-already-exists: "&8» &cA gang with that name already exists."
+    success: "&8» &aThe gang %old-name% was renamed to %new-name%."
   accept:
     on-cooldown: "&8» &cYou are on cooldown. Wait before accepting an invite."
     already-in-gang: "&8» &cYou are already in a gang."

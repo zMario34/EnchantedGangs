@@ -23,14 +23,15 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 public class SQLManager {
 
     private final EnchantedGangs plugin;
-    private final Executor executor = Executors.newFixedThreadPool(1);
+    private final ExecutorService executor = Executors.newFixedThreadPool(1);
     @Getter
     private HikariDataSource dataSource;
 
@@ -118,9 +119,19 @@ public class SQLManager {
         }
     }
 
-    public void disconnect() {
+    public void disconnect() throws InterruptedException {
         if (dataSource != null && !dataSource.isClosed()) {
             dataSource.close();
+        }
+
+        executor.shutdown();
+
+        if (!executor.awaitTermination(60, TimeUnit.SECONDS)) {
+            executor.shutdownNow();
+
+            if (!executor.awaitTermination(60, TimeUnit.SECONDS)) {
+                plugin.getLogger().severe("Pool did not terminate!");
+            }
         }
     }
 
@@ -223,33 +234,31 @@ public class SQLManager {
         updateAsync("UPDATE `gangs` SET `chest` = ? WHERE `name` = ?", toBase64, name);
     }
 
-    public Collection<Gang> getGangs() {
+    public List<Gang> getGangs() {
         List<Gang> gangs = new ArrayList<>();
 
         try (CachedRowSet rowSet = query("SELECT * FROM `gangs`")) {
             while (rowSet.next()) {
                 String name = rowSet.getString("name");
                 String chest = rowSet.getString("chest");
-                getMembers(name).thenAccept(members -> {
-                    Gang gang = new GangImpl(name, members);
+                Map<UUID, Integer> members = getMembers(name);
+                Gang gang = new GangImpl(name, members);
 
-                    try {
-                        gang.setKills(rowSet.getInt("kills"));
-                        gang.setBalance(rowSet.getDouble("balance"));
+                try {
+                    gang.setKills(rowSet.getInt("kills"));
+                    gang.setBalance(rowSet.getDouble("balance"));
 
-                        if (chest != null) {
-                            gang.setChest(InventoryUtils.fromBase64(chest,
-                                    MessagesConfiguration.GANG_CHEST_TITLE.getString(null)));
-                        }
-
-                        getOwner(name).thenAccept(gang::setOwner);
-
-                        gangs.add(gang);
-                    } catch (SQLException | IOException e) {
-                        plugin.getLogger().log(Level.SEVERE,
-                                String.format("Failed to load gang %s from database.", name), e);
+                    if (chest != null) {
+                        gang.setChest(InventoryUtils.fromBase64(chest,
+                                MessagesConfiguration.GANG_CHEST_TITLE.getString(null)));
                     }
-                });
+
+                    gang.setOwner(getOwner(name));
+                    gangs.add(gang);
+                } catch (SQLException | IOException e) {
+                    plugin.getLogger().log(Level.SEVERE,
+                            String.format("Failed to load gang %s from database.", name), e);
+                }
             }
         } catch (SQLException e) {
             plugin.getLogger().log(Level.SEVERE, "Failed to load gangs from database.", e);
@@ -258,36 +267,32 @@ public class SQLManager {
         return gangs;
     }
 
-    public CompletableFuture<UUID> getOwner(String name) {
-        return queryAsync("SELECT `uuid` FROM `gang_members` WHERE `gang` = ? AND `rank` = ?",
-                name, 1).thenApply(set -> {
-            try (CachedRowSet rowSet = set) {
-                if (rowSet.next()) {
-                    return UUID.fromString(rowSet.getString("uuid"));
-                }
-            } catch (SQLException e) {
-                plugin.getLogger().log(Level.SEVERE,
-                        String.format("Failed to get owner of gang %s from database.", name), e);
+    public UUID getOwner(String name) {
+        try (CachedRowSet rowSet = query("SELECT `uuid` FROM `gang_members` WHERE `gang` = ? AND `rank` = ?",
+                name, 1)) {
+            if (rowSet.next()) {
+                return UUID.fromString(rowSet.getString("uuid"));
             }
+        } catch (SQLException e) {
+            plugin.getLogger().log(Level.SEVERE,
+                    String.format("Failed to get owner of gang %s from database.", name), e);
+        }
 
-            return null;
-        });
+        return null;
     }
 
-    public CompletableFuture<Map<UUID, Integer>> getMembers(String name) {
-        return queryAsync("SELECT * FROM `gang_members` WHERE `gang` = ?", name).thenApply(set -> {
-            Map<UUID, Integer> members = Maps.newHashMap();
+    public Map<UUID, Integer> getMembers(String name) {
+        Map<UUID, Integer> members = Maps.newHashMap();
 
-            try (CachedRowSet rowSet = set) {
-                while (rowSet.next()) {
-                    members.put(UUID.fromString(rowSet.getString("uuid")), rowSet.getInt("rank"));
-                }
-            } catch (SQLException e) {
-                plugin.getLogger().log(Level.SEVERE, "Failed to load gang members from database.", e);
+        try (CachedRowSet rowSet = query("SELECT * FROM `gang_members` WHERE `gang` = ?", name)) {
+            while (rowSet.next()) {
+                members.put(UUID.fromString(rowSet.getString("uuid")), rowSet.getInt("rank"));
             }
+        } catch (SQLException e) {
+            plugin.getLogger().log(Level.SEVERE, "Failed to load gang members from database.", e);
+        }
 
-            return members;
-        });
+        return members;
     }
 
     public void setKills(String name, int kills) {
@@ -311,5 +316,9 @@ public class SQLManager {
         }
 
         return users;
+    }
+
+    public void setGangName(String name, String newName) {
+        updateAsync("UPDATE `gangs` SET `name` = ? WHERE `name` = ?", newName, name);
     }
 }

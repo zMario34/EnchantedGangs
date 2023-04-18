@@ -29,6 +29,7 @@ public enum SettingsConfiguration {
 
     CREATE_COST("create-cost"),
 
+    PERMISSION_RENAME("ranks.permissions.rename"),
     PERMISSION_PROMOTE("ranks.permissions.promote"),
     PERMISSION_DEMOTE("ranks.permissions.demote"),
     PERMISSION_KICK("ranks.permissions.kick"),
@@ -61,6 +62,7 @@ public enum SettingsConfiguration {
     COMMAND_KICK_NAME("commands.kick.name"),
     COMMAND_LEAVE_NAME("commands.leave.name"),
     COMMAND_DISBAND_NAME("commands.disband.name"),
+    COMMAND_RENAME_NAME("commands.rename.name"),
     COMMAND_ACCEPT_NAME("commands.accept.name"),
     COMMAND_PROMOTE_NAME("commands.promote.name"),
     COMMAND_DEMOTE_NAME("commands.demote.name"),

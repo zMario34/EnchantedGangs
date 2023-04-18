@@ -62,14 +62,14 @@ public class DemoteCommand implements SubCommand {
                 player.sendMessage(MessagesConfiguration.DEMOTE_TARGET_NOT_IN_SENDER_GANG.getString(player));
                 return;
             }
+            int rank = gang.getMembers().get(target.getUniqueId());
 
-            if (target.getUniqueId().equals(gang.getOwner())) {
+            if (target.getUniqueId().equals(gang.getOwner()) || rank == 1) {
                 player.sendMessage(MessagesConfiguration.DEMOTE_TARGET_IS_OWNER.getString(player));
                 return;
             }
 
             String gangName = gang.getName();
-            int rank = gang.getMembers().get(target.getUniqueId());
             int newRank = rank + 1;
 
             if (!plugin.getStorage().rankExists(newRank)) {

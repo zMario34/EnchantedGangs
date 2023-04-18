@@ -30,6 +30,7 @@ import tech.zmario.enchantedgangs.utils.Utils;
 
 import java.io.File;
 import java.util.Objects;
+import java.util.logging.Level;
 
 @Getter
 public final class EnchantedGangs extends JavaPlugin implements EnchantedGangsAPI {
@@ -81,18 +82,20 @@ public final class EnchantedGangs extends JavaPlugin implements EnchantedGangsAP
 
     private void updateConfigurations() {
         if (!SettingsConfiguration.CONFIGURATION_UPDATER.getBoolean()) return;
+        int newSettingsVersion = 2;
+        int newMessagesVersion = 3;
 
-        if (SettingsConfiguration.VERSION.getInt() < 1) {
-            SettingsConfiguration.VERSION.set(1);
+        if (SettingsConfiguration.VERSION.getInt() < newSettingsVersion) {
+            SettingsConfiguration.VERSION.set(newSettingsVersion);
 
-            Utils.updateFile(this, "config", getConfig(), 1);
+            Utils.updateFile(this, "config", getConfig(), newSettingsVersion);
         }
 
-        if (MessagesConfiguration.VERSION.getInt() < 2) {
-            MessagesConfiguration.VERSION.set(1);
+        if (MessagesConfiguration.VERSION.getInt() < newMessagesVersion) {
+            MessagesConfiguration.VERSION.set(newMessagesVersion);
 
             Utils.updateFile(this, "messages_" + SettingsConfiguration.LANGUAGE.getString(),
-                    getMessages(), 2);
+                    getMessages(), newMessagesVersion);
         }
     }
 
@@ -174,11 +177,14 @@ public final class EnchantedGangs extends JavaPlugin implements EnchantedGangsAP
     @Override
     public void onDisable() {
         if (sqlManager != null) {
-            sqlManager.disconnect();
+            try {
+                sqlManager.disconnect();
+            } catch (InterruptedException e) {
+                getLogger().log(Level.SEVERE, "An error occurred while disconnecting from the database", e);
+            }
         }
 
         Bukkit.getServicesManager().unregister(EnchantedGangsAPI.class, this);
-
         Utils.unregisterCommands();
     }
 
