@@ -36,6 +36,7 @@ commands:
     - " &7/gangs kick <player> &8- &7Kick a player from the gang."
     - " &7/gangs leave &8- &7Leave the gang."
     - " &7/gangs disband &8- &7Delete the entire gang."
+    - " &7/gangs rename <name> &8- &7Rename the gang."
     - " &7/gangs accept <player> &8- &7Accept an invite from a player."
     - " &7/gangs promote <player> &8- &7Changes the leader of the gang."
     - " &7/gangs show (gang|player) &8- &7Show information about a gang."

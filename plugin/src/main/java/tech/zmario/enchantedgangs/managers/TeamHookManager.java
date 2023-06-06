@@ -28,6 +28,11 @@ public class TeamHookManager {
             registerTeamHook(new BadlionTeamHook(plugin));
         }
     }
+
+    public void disable() {
+        plugin.getLogger().info("Disabling team hooks...");
+        teamHooks.clear();
+    }
     
     public void refreshTeam(Gang gang) {
         for (TeamHook teamHook : teamHooks) {

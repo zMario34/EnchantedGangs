@@ -37,12 +37,16 @@ public class KickCommand implements SubCommand {
         }
 
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            OfflinePlayer target = plugin.getServer().getOfflinePlayer(args[1]);
+            OfflinePlayer target;
 
-            if (!target.hasPlayedBefore()) {
-                player.sendMessage(MessagesConfiguration.KICK_TARGET_NOT_FOUND.getString(player)
-                        .replace("%target%", args[1]));
-                return;
+            if ((target = Bukkit.getPlayer(args[1])) == null) {
+                target = Bukkit.getOfflinePlayer(args[1]);
+
+                if (!target.hasPlayedBefore()) {
+                    player.sendMessage(MessagesConfiguration.KICK_TARGET_NOT_FOUND.getString(player)
+                            .replace("%target%", args[1]));
+                    return;
+                }
             }
 
             if (target == player) {

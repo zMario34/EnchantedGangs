@@ -54,6 +54,7 @@ public final class EnchantedGangs extends JavaPlugin implements EnchantedGangsAP
 
     @Override
     public void onEnable() {
+        instance = this;
         loadInstances();
         loadMessages();
 
@@ -119,7 +120,6 @@ public final class EnchantedGangs extends JavaPlugin implements EnchantedGangsAP
     private void loadInstances() {
         saveDefaultConfig();
 
-        instance = this;
         libraryManager = new BukkitLibraryManager(this);
 
         libraryManager.addMavenCentral();
@@ -184,8 +184,13 @@ public final class EnchantedGangs extends JavaPlugin implements EnchantedGangsAP
             }
         }
 
+        teamHookManager.disable();
         Bukkit.getServicesManager().unregister(EnchantedGangsAPI.class, this);
         Utils.unregisterCommands();
+
+        instance = null;
+        teamHookManager = null;
+        libraryManager = null;
     }
 
     @Override

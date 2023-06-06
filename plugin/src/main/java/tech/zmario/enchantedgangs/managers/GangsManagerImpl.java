@@ -17,6 +17,10 @@ import tech.zmario.enchantedgangs.enums.SettingsConfiguration;
 import tech.zmario.enchantedgangs.utils.InventoryUtils;
 
 import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.logging.Level;
 
 @RequiredArgsConstructor
 public class GangsManagerImpl implements GangsManager {
@@ -61,6 +65,15 @@ public class GangsManagerImpl implements GangsManager {
         User user = getUserUnsafe(memberUUID);
 
         if (user == null) {
+            try {
+                user = plugin.getSqlManager().loadUser(memberUUID).get(2, TimeUnit.SECONDS);
+            } catch (InterruptedException | ExecutionException | TimeoutException e) {
+                plugin.getLogger().log(Level.SEVERE, "Failed to load user from database!", e);
+                return Optional.empty();
+            }
+        }
+
+        if (user.getGangName() == null) {
             return Optional.empty();
         }
 

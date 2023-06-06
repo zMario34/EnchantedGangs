@@ -21,10 +21,8 @@ public class PlayerConnectionListener implements Listener {
         UUID uuid = event.getUniqueId();
 
         if (plugin.getStorage().getUser(uuid) != null) return;
-        User user = new User(uuid);
 
-        plugin.getSqlManager().getGangName(uuid).thenAccept(user::setGangName);
-        plugin.getStorage().getUsers().put(uuid, user);
+        plugin.getSqlManager().loadUser(uuid);
     }
 
     @EventHandler
@@ -35,6 +33,8 @@ public class PlayerConnectionListener implements Listener {
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
+        plugin.getStorage().getUsers().remove(event.getPlayer().getUniqueId());
+
         plugin.getGangsManager().getGangByMember(event.getPlayer().getUniqueId())
                 .ifPresent(gang -> plugin.getGangsManager().refreshTeammates(gang));
     }

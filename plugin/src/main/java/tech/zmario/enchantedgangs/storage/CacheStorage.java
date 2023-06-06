@@ -49,13 +49,16 @@ public class CacheStorage {
             }
         }));
 
+        List<Gang> gangList = Arrays.asList(gangs);
+        Collections.reverse(gangList);
+
         position -= 1;
 
-        if (gangs.length < position) {
+        if (position >= gangs.length) {
             return null;
         }
 
-        return gangs[position];
+        return gangList.get(position);
     }
 
     public void addUser(@NotNull User user) {

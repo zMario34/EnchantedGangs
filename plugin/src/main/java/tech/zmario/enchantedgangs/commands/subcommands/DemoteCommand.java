@@ -38,12 +38,16 @@ public class DemoteCommand implements SubCommand {
         }
 
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            OfflinePlayer target = Bukkit.getOfflinePlayer(args[1]);
+            OfflinePlayer target;
 
-            if (!target.hasPlayedBefore()) {
-                player.sendMessage(MessagesConfiguration.DEMOTE_TARGET_NOT_FOUND.getString(player)
-                        .replace("%target%", args[1]));
-                return;
+            if ((target = Bukkit.getPlayer(args[1])) == null) {
+                target = Bukkit.getOfflinePlayer(args[1]);
+
+                if (!target.hasPlayedBefore()) {
+                    player.sendMessage(MessagesConfiguration.DEMOTE_TARGET_NOT_FOUND.getString(player)
+                            .replace("%target%", args[1]));
+                    return;
+                }
             }
 
             if (target == player) {
@@ -59,13 +63,15 @@ public class DemoteCommand implements SubCommand {
             }
 
             if (!Objects.equals(targetGang, gangOptional)) {
-                player.sendMessage(MessagesConfiguration.DEMOTE_TARGET_NOT_IN_SENDER_GANG.getString(player));
+                player.sendMessage(MessagesConfiguration.DEMOTE_TARGET_NOT_IN_SENDER_GANG.getString(player)
+                        .replace("%target%", args[1]));
                 return;
             }
             int rank = gang.getMembers().get(target.getUniqueId());
 
             if (target.getUniqueId().equals(gang.getOwner()) || rank == 1) {
-                player.sendMessage(MessagesConfiguration.DEMOTE_TARGET_IS_OWNER.getString(player));
+                player.sendMessage(MessagesConfiguration.DEMOTE_TARGET_IS_OWNER.getString(player)
+                        .replace("%target%", args[1]));
                 return;
             }
 
@@ -73,9 +79,10 @@ public class DemoteCommand implements SubCommand {
             int newRank = rank + 1;
 
             if (!plugin.getStorage().rankExists(newRank)) {
-                player.sendMessage(MessagesConfiguration.DEMOTE_TARGET_IS_LOWEST_RANK.getString(player));
+                player.sendMessage(MessagesConfiguration.DEMOTE_TARGET_IS_LOWEST_RANK.getString(player).replace("%target%", args[1]));
                 return;
             }
+            String newRankName = plugin.getStorage().getRankName(newRank);
 
             plugin.getGangsManager().updateRank(target.getUniqueId(), newRank);
 
@@ -83,16 +90,20 @@ public class DemoteCommand implements SubCommand {
             Bukkit.getPluginManager().callEvent(event);
 
             player.sendMessage(MessagesConfiguration.DEMOTE_SUCCESS_SENDER.getString(target)
-                    .replace("%target%", target.getName()));
+                    .replace("%target%", target.getName())
+                    .replace("%gang%", gangName)
+                    .replace("%rank%", newRankName));
 
             for (UUID memberUuid : plugin.getGangsManager().getGangMembers(gangName)) {
-                if (player.getUniqueId() == memberUuid) continue;
+                if (player.getUniqueId().equals(memberUuid)) continue;
                 Player member = Bukkit.getPlayer(memberUuid);
 
                 if (member == null) continue;
 
                 member.sendMessage(MessagesConfiguration.DEMOTE_SUCCESS_MEMBERS.getString(target)
-                        .replace("%target%", target.getName()));
+                        .replace("%target%", target.getName())
+                        .replace("%gang%", gangName)
+                        .replace("%rank%", newRankName));
             }
         });
     }

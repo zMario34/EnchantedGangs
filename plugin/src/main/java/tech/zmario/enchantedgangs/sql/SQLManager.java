@@ -22,10 +22,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.logging.Level;
 
 public class SQLManager {
@@ -212,6 +209,11 @@ public class SQLManager {
         });
     }
 
+    public void updateUuid(UUID oldUuid, UUID newUuid) {
+        updateAsync("UPDATE `gang_members` SET `uuid` = ? WHERE `uuid` = ?",
+                newUuid.toString(), oldUuid.toString());
+    }
+
     public CompletableFuture<Void> createGang(String gangName) {
         return updateAsync("INSERT INTO `gangs` (`name`, `chest`, `kills`, `balance`) VALUES (?, ?, ?, ?)",
                 gangName, null, 0, 0.0);
@@ -320,5 +322,39 @@ public class SQLManager {
 
     public void setGangName(String name, String newName) {
         updateAsync("UPDATE `gangs` SET `name` = ? WHERE `name` = ?", newName, name);
+    }
+
+    public CompletableFuture<UUID> getCurrentUuid(UUID uuid) {
+        return queryAsync("SELECT `uuid` FROM `gang_members` WHERE `uuid` = ?",
+                uuid.toString()).thenApplyAsync(set -> {
+            try (CachedRowSet rowSet = set) {
+                if (rowSet.next()) {
+                    return UUID.fromString(rowSet.getString("uuid"));
+                }
+            } catch (SQLException e) {
+                plugin.getLogger().log(Level.SEVERE, "Failed to get current uuid", e);
+            }
+
+            return null;
+        });
+    }
+
+    public CompletableFuture<User> loadUser(UUID uuid) {
+        return getCurrentUuid(uuid).thenApply(dataUuid -> {
+            User user = new User(uuid);
+
+            if (dataUuid == null) {
+                user.setGangName(null);
+            } else {
+                if (!dataUuid.equals(uuid)) {
+                    updateUuid(dataUuid, uuid);
+                }
+
+                getGangName(uuid).thenAccept(user::setGangName);
+            }
+
+            plugin.getStorage().getUsers().put(uuid, user);
+            return user;
+        });
     }
 }

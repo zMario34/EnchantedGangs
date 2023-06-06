@@ -93,30 +93,30 @@ public class ShowCommand implements SubCommand {
 
                     StringBuilder members = new StringBuilder();
 
-                    if (gangMembers.size() == 1) {
-                        members.append(MessagesConfiguration.SHOW_PLACEHOLDER_MEMBERS_EMPTY.getString(player));
-                    } else {
-                        for (UUID memberUuid : gangMembers) {
-                            if (gang.getMembers().get(memberUuid) != rank) continue;
+                    for (UUID memberUuid : gangMembers) {
+                        if (gang.getMembers().get(memberUuid) != rank) continue;
 
-                            OfflinePlayer member = Bukkit.getOfflinePlayer(memberUuid);
+                        OfflinePlayer member = Bukkit.getOfflinePlayer(memberUuid);
 
-                            String status = member.isOnline() ?
-                                    MessagesConfiguration.SHOW_PLACEHOLDER_STATUS_ONLINE.getString(player) :
-                                    MessagesConfiguration.SHOW_PLACEHOLDER_STATUS_OFFLINE.getString(player);
-                            String name = member.getName() == null ? "Unknown" : member.getName();
+                        String status = member.isOnline() ?
+                                MessagesConfiguration.SHOW_PLACEHOLDER_STATUS_ONLINE.getString(player) :
+                                MessagesConfiguration.SHOW_PLACEHOLDER_STATUS_OFFLINE.getString(player);
+                        String name = member.getName() == null ? "???" : member.getName();
 
-                            if (gangMembers.get(gangMembers.size() - 1) == memberUuid) {
-                                members.append(MessagesConfiguration.SHOW_PLACEHOLDER_MEMBERS_LAST.getString(player)
-                                        .replace("%status%", status)
-                                        .replace("%member%", name));
-                                continue;
-                            }
-
-                            members.append(MessagesConfiguration.SHOW_PLACEHOLDER_MEMBERS_DEFAULT.getString(player)
+                        if (gangMembers.get(gangMembers.size() - 1).equals(memberUuid)) {
+                            members.append(MessagesConfiguration.SHOW_PLACEHOLDER_MEMBERS_LAST.getString(player)
                                     .replace("%status%", status)
                                     .replace("%member%", name));
+                            continue;
                         }
+
+                        members.append(MessagesConfiguration.SHOW_PLACEHOLDER_MEMBERS_DEFAULT.getString(player)
+                                .replace("%status%", status)
+                                .replace("%member%", name));
+                    }
+
+                    if (members.length() == 0) {
+                        members.append(MessagesConfiguration.SHOW_PLACEHOLDER_MEMBERS_EMPTY.getString(player));
                     }
 
                     string = string.replace("%members_" + rank + "%", members.toString());

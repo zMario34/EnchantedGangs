@@ -33,7 +33,7 @@ public class Utils {
     private final int intVersion = Integer.parseInt(version.split("_")[1]);
 
     private final Pattern hexPattern = Pattern.compile("&#(\\w{5}[0-9a-f])");
-    private final Pattern illegalPattern = Pattern.compile("[#<>$+%!`&*'|{?\"=}/:@~()^]");
+    private final Pattern illegalPattern = Pattern.compile("[.#<>$+%!`&*'|{?\"=}/:@~()^]");
 
     public String colorize(@NotNull String message) {
         String colored = ChatColor.translateAlternateColorCodes('&', message);
